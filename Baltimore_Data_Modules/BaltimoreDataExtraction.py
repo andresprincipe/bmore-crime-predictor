@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import ipydeps
 ipydeps.pip(['requests','tqdm'])
 import pandas as pd
@@ -9,7 +8,7 @@ import requests
 import json
 import os
 from datetime import date
-from datetime import datetime
+
 
 
 class BmoreDataExtraction:
@@ -74,25 +73,22 @@ class BmoreDataExtraction:
         DataPath_dict = {}
         for data_name in tqdm(available_li):
             filename_str = OGName_CleanName_dict[data_name]+'_'+str(date.today())+'.json'
+            full_path_str = path_str+filename_str
             r = requests.get(self.API_dict_[data_type_str][data_name])
-            with open(path_str+filename_str, "w+") as f:
+            with open(full_path_str, "w+") as f:
                 json.dump(r.json(), f)
-            DataPath_dict[data_name] = path_str+filename_str
+            DataPath_dict[data_name] = full_path_str
         return DataPath_dict
     
-    def TabularDataToDF(self,DataPath_dict):
-        # This function can extract all the tabular data specified in your 
-        # API link dictionary.
-        print('Turning tabular data Into DataFrames...')
-        TABULAR_DATA_DF_dict = {}
+    def FeatureCollectionToDF(self,DataPath_dict):
+        print('Turning Feature Collections data Into DataFrames...')
+        FEAT_DATA_DF_dict = {}
         for key in tqdm(DataPath_dict.keys()):
             f = open(DataPath_dict[key])
             oneTableData_dict = json.load(f)
-            row_li = [sub_dict['properties'] for sub_dict in oneTableData_dict['features']]
-            OneTable_df = pd.DataFrame(row_li)
-            TABULAR_DATA_DF_dict[key] = OneTable_df
-        return TABULAR_DATA_DF_dict
-    
+            FEAT_DATA_DF_dict[key] = self.ExtractAllProperties(oneTableData_dict)
+        return FEAT_DATA_DF_dict
+        
     def GenerateMeanGeoDict(self,lon_lat_ar):
         # This function expects an input of a 2d numpy array where the first
         # column is the Longitude and the second column is the Latitude.
@@ -105,8 +101,13 @@ class BmoreDataExtraction:
         return row_dict
     
     def ExtractAllProperties(self,oneDataFile_dict):
-        row_li = [sub_dict['properties'] for sub_dict in oneDataFile_dict['features']]
-        return pd.DataFrame(row_li)
+        try:
+            row_li = [sub_dict['properties'] for sub_dict in oneDataFile_dict['features']]
+            return pd.DataFrame(row_li)
+        except KeyError:
+            print('Successful connection, but no data.')
+            return pd.DataFrame([0])
+        
     
     def ExtractAllCoordinates(self,oneDataFile_dict):
         AREAgeo_ar_li = [np.array(AREA['geometry']['coordinates'][0]) 
