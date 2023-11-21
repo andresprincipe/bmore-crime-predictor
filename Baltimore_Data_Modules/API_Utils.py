@@ -79,7 +79,7 @@ class APIOffset_UrlGather:
                 print('Request sucessful, but no features available')
                 return None
             
-    def GatherOffsetUrls(self,max_start=10000,page_limit=2000):
+    def GatherOffsetUrls(self):
         """
         This function is used to programatically create all the urls necessary
         to obtain the entirety of a given Open Baltimore dataset. Each request 
