@@ -91,6 +91,7 @@ class APIOffset_UrlGather:
         while feature_num is not None:
             offset_num += 2000
             url = self.AddOffsetToURL(offset_num)
+            # print(url)
             feature_num = self.CheckFeatures(url)
             AllDataURLs_li.append(url)
         return AllDataURLs_li[:-1]
