@@ -1,0 +1,1 @@
+{"INPUT_STEPS": 1460, "OUT_STEPS": 336, "column_indices": {"CCNumber": 0, "CrimeCode": 1, "Description": 2, "Inside_Outside": 3, "Weapon": 4, "Location": 5, "Old_District": 6, "Neighborhood": 7, "Day sin": 8, "Day cos": 9, "Year sin": 10, "Year cos": 11, "Latitude": 12, "Longitude": 13}, "geo_cols_": ["Latitude", "Longitude"]}

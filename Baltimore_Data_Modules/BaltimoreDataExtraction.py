@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import ipydeps
-ipydeps.pip(['requests','tqdm'])
+ipydeps.pip(['requests','tqdm'],verbose=False)
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
