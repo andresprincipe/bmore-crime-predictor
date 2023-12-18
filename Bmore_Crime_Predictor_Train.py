@@ -3,10 +3,10 @@
 """
 Training script for Bmore Crime Predictor
 """
-
+import IPython
 import ipydeps
 ipydeps.pip(['requests','tqdm','tensorflow'],verbose=False)
-import IPython
+IPython.display.clear_output()
 import tensorflow as tf
 import pandas as pd
 import json
@@ -117,7 +117,7 @@ Bmore_Crime_df.index = pd.DatetimeIndex(list(Bmore_Crime_df.index))
 print('Bmore Crime Shape:',Bmore_Crime_df.shape)
 
 # Extracting categorical and periodic features
-categorical_df = bcfe.CatFeatEncode(Bmore_Crime_df)
+categorical_df,oe = bcfe.CatFeatEncode(Bmore_Crime_df)
 periodicity_df = bcfe.PeriodicityEncode(Bmore_Crime_df)
 print('Categorical Feature Shape:',categorical_df.shape)
 print('periodicity Feature Shape:',periodicity_df.shape)
@@ -201,11 +201,11 @@ wg = Model_Utils.WindowGenerator(input_width=INPUT_STEPS,
 # Training LSTM Model
 ##########################################
 
-MAX_EPOCHS = 20
+MAX_EPOCHS = 10
 multi_val_performance = {}
 multi_performance = {}
 
-def compile_and_fit(model, window, patience=2):
+def compile_and_fit(model, window, patience=1):
     # Created using M1/M2 Mac hence the use of "tf.keras.optimizers.legacy.Adam" 
     # instead of "tf.keras.optimizers.Adam"
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
@@ -265,11 +265,12 @@ print('Combined Uncertainty:',combined_uncertainty)
 ##########################################
 deploy_df = wg.test_df.tail(INPUT_STEPS) 
 deploy_df.to_csv(os.getcwd()+'/deploy.csv') # saving deployment data
-joblib.dump(norm,'normalizer.save') # saving scaler
+joblib.dump(norm,'normalizer.save') # saving quantile transformer
+joblib.dump(oe,'categorical_encoder.save') # saving ordinal encoder
 # Creating JSON file of metadata needed to deploy model
 metadata_dict = {'INPUT_STEPS':INPUT_STEPS,
-                 'OUT_STEPS':OUT_STEPS,
-                 'column_indices':wg.column_indices,
-                 'geo_cols_':bcfe.geo_cols_}
+                  'OUT_STEPS':OUT_STEPS,
+                  'column_indices':wg.column_indices,
+                  'geo_cols_':bcfe.geo_cols_}
 with open("deploy_metadata.json", "w") as outfile: 
     json.dump(metadata_dict, outfile)

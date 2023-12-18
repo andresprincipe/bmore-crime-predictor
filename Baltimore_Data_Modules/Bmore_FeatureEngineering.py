@@ -61,10 +61,11 @@ class BmoreCrimeFeatureEngineering:
     def CatFeatEncode(self,df):
         oe = OrdinalEncoder()
         Cat_X = df[self.feature_cols_['CATEGORICAL']].values
-        E_Cat_df = pd.DataFrame(oe.fit_transform(Cat_X),
+        oe.fit(Cat_X)
+        E_Cat_df = pd.DataFrame(oe.transform(Cat_X),
                                 columns=self.feature_cols_['CATEGORICAL'],
                                 index=df.index)
-        return E_Cat_df
+        return E_Cat_df, oe
 
     def PeriodicityEncode(self,df):
         new_df = self.CreateTimeIndexDF(df)

@@ -1,0 +1,26 @@
+{
+    "FEAT_COLLECT": {
+        "Part 1 Crime Data": "https://services1.arcgis.com/UWYHeuuJISiGmgXx/arcgis/rest/services/Part1_Crime_Beta/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+    },
+    "CSA_DATA": {
+        "Percent of Adult Population on Parole/Probation - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Prbprl/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Property Crime Rate per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Prop/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Violent Crime Rate per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Viol/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Part 1 Crime Rate per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Crime/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Gun-Related Homicides per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Gunhom/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Arrests per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Arrests/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Domestic Violence Calls For Service per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Juvarr/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Juvenile Arrest Rate per 1,000 Juveniles - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Juvarr/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Juvenile Arrest Rate for Violent Offenses per 1,000 Juveniles - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Juvviol/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Juvenile Arrest Rate for Drug-Related Offenses per 1,000 Juveniles - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Juvdrug/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Narcotics Calls for Service per 1,000 Residents - Community Statistical Area": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Narc/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+    },
+    "CITY_DATA": {
+        "Property Crime Rate per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Prop/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson",
+        "Violent Crime Rate per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Viol/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson",
+        "Part 1 Crime Rate per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Crime/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Gun-Related Homicides per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Gunhom/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Narcotics Calls for Service per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Narc/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson",
+        "Number of Common Assault Calls for Service per 1,000 Residents - City": "https://services1.arcgis.com/mVFRs7NF4iFitgbY/arcgis/rest/services/Caslt/FeatureServer/1/query?outFields=*&where=1%3D1&f=geojson"
+    }
+}
