@@ -3,10 +3,20 @@
 """
 Training script for Bmore Crime Predictor
 """
-import IPython
+##########################################
+# Initializing Baltimore Data Extraction class
+##########################################
+
 import ipydeps
-ipydeps.pip(['requests','tqdm','tensorflow'],verbose=False)
-IPython.display.clear_output()
+ipydeps.pip(['IPython',
+             'tensorflow',
+             'requests',
+             'tqdm',
+             'pandas',
+             'joblib',
+             'scikit-learn'],verbose=False)
+import logging
+import IPython
 import tensorflow as tf
 import pandas as pd
 import json
@@ -20,10 +30,13 @@ from sklearn.preprocessing import QuantileTransformer
 from Baltimore_Data_Modules.BaltimoreDataExtraction import BmoreDataExtraction
 from Baltimore_Data_Modules.Bmore_FeatureEngineering import BmoreCrimeFeatureEngineering
 import Baltimore_Data_Modules.Model_Utils as Model_Utils
-IPython.display.clear_output()
+
 def days_hours_minutes(td):
     # function that is used for converting time into a readable format
     return td.days, td.seconds//3600, (td.seconds//60)%60
+
+logging.basicConfig(filename=os.getcwd()+'/BmoreCrimeForecast.log', encoding='utf-8', level=logging.DEBUG)
+Tlog = logging.getLogger(__name__)
 
 ##########################################
 # Initializing Baltimore Data Extraction class
@@ -112,32 +125,40 @@ Bmore_Crime_df = bcfe.CreateTimeIndexDF(FEAT_COLLECT_DF_dict['Part 1 Crime Data'
 Bmore_Crime_df = bcfe.DropUnwantedFeatsDF(Bmore_Crime_df)
 Bmore_Crime_df = bcfe.GeoStatsDF(Bmore_Crime_df)
 # filtering to Datetimes that make sense
-Bmore_Crime_df = Bmore_Crime_df[Bmore_Crime_df.CrimeDateTime.astype(int) > 1000000000000]
+dtEpochNumfltr = 1000000000000
+Bmore_Crime_df = Bmore_Crime_df[Bmore_Crime_df.CrimeDateTime.astype(int) > dtEpochNumfltr]
 Bmore_Crime_df.index = pd.DatetimeIndex(list(Bmore_Crime_df.index))
-print('Bmore Crime Shape:',Bmore_Crime_df.shape)
+print('Bmore Crime Shape = ',Bmore_Crime_df.shape)
+Tlog.info('Bmore Crime Shape = '+str(Bmore_Crime_df.shape))
 
 # Extracting categorical and periodic features
 categorical_df,oe = bcfe.CatFeatEncode(Bmore_Crime_df)
 periodicity_df = bcfe.PeriodicityEncode(Bmore_Crime_df)
-print('Categorical Feature Shape:',categorical_df.shape)
-print('periodicity Feature Shape:',periodicity_df.shape)
+print('Categorical Feature Shape = ',categorical_df.shape)
+print('periodicity Feature Shape = ',periodicity_df.shape)
+Tlog.info('Categorical Feature Shape = '+str(categorical_df.shape))
+Tlog.info('periodicity Feature Shape = '+str(periodicity_df.shape))
 
 # Merging features & scaling
 FINAL_X_df = pd.concat([categorical_df,periodicity_df],axis=1)
-print('Feature Shape (X):',FINAL_X_df.shape)
+print('Feature Shape (X) = ',FINAL_X_df.shape)
+Tlog.info('Feature Shape (X) = '+str(FINAL_X_df.shape))
 # Separating Prediction targets
 FINAL_Y_df = Bmore_Crime_df[bcfe.geo_cols_].apply(pd.to_numeric)
-print('Target Shape (Y):',FINAL_Y_df.shape)
+print('Target Shape (Y) = ',FINAL_Y_df.shape)
+Tlog.info('Target Shape (Y) = '+str(FINAL_Y_df.shape))
 
 # Combining everything together again
 FINAL_DF = pd.concat([FINAL_X_df,FINAL_Y_df],axis=1).sort_index()
 FINAL_DF = bcfe.DropZeroGeos(FINAL_DF)
-print('Final Shape Regular (X+Y):',FINAL_DF.shape)
+print('Final Shape Regular (X+Y) = ',FINAL_DF.shape)
+Tlog.info('Final Shape Regular (X+Y) = '+str(FINAL_DF.shape))
 #resampling  for every hour
 RULE_str = '1H' # 1H for every hour and 1D for every day
 resampled_FINAL_DF = FINAL_DF.resample(rule=RULE_str).mean(numeric_only=True).interpolate(method='akima')
 resampled_FINAL_shape = resampled_FINAL_DF.shape
-print('Final Shape Resampled (X+Y):',resampled_FINAL_shape)
+print('Final Shape Resampled (X+Y) = ',resampled_FINAL_shape)
+Tlog.info('Final Shape Resampled (X+Y) = '+str(resampled_FINAL_shape))
 
 ##########################################
 # Splitting Data Into Train, Validation, & Test Sets
@@ -149,15 +170,18 @@ def DataSplitter(df):
     TRAIN_DF = df[0:int(n*0.7)]
     VAL_DF = df[int(n*0.7):int(n*0.9)]
     TEST_DF = df[int(n*0.9):]
-    print('Train Shape:',TRAIN_DF.shape)
-    print('Train Datetime Range:',
-          str(TRAIN_DF.index.min())+' -> '+str(TRAIN_DF.index.max())+'\n')
-    print('Validation Shape:',VAL_DF.shape)
-    print('Validation Datetime Range:',
-          str(VAL_DF.index.min())+' -> '+str(VAL_DF.index.max())+'\n')
-    print('Test Shape:',TEST_DF.shape)
-    print('Test Datetime Range:',
-          str(TEST_DF.index.min())+' -> '+str(TEST_DF.index.max())+'\n')
+    print('Train Shape = ',TRAIN_DF.shape)
+    print('Train Datetime Range = ',str(TRAIN_DF.index.min())+' -> '+str(TRAIN_DF.index.max())+'\n')
+    Tlog.info('Train Shape = '+str(TRAIN_DF.shape))
+    Tlog.info('Train Datetime Range = '+str(TRAIN_DF.index.min())+' -> '+str(TRAIN_DF.index.max())+'\n')
+    print('Validation Shape = ',VAL_DF.shape)
+    print('Validation Datetime Range = ',str(VAL_DF.index.min())+' -> '+str(VAL_DF.index.max())+'\n')
+    Tlog.info('Validation Shape = '+str(VAL_DF.shape))
+    Tlog.info('Validation Datetime Range = '+str(VAL_DF.index.min())+' -> '+str(VAL_DF.index.max())+'\n')
+    print('Test Shape = ',TEST_DF.shape)
+    print('Test Datetime Range = ',str(TEST_DF.index.min())+' -> '+str(TEST_DF.index.max())+'\n')
+    Tlog.info('Test Shape = '+str(TEST_DF.shape))
+    Tlog.info('Test Datetime Range = '+str(TEST_DF.index.min())+' -> '+str(TEST_DF.index.max())+'\n')
     return {'TRAIN':TRAIN_DF,'VAL':VAL_DF,'TEST':TEST_DF}
 
 split_dict = DataSplitter(resampled_FINAL_DF)
@@ -238,7 +262,9 @@ train_finish = datetime.now() - train_start
 print('Total Training Time {d}:{h}:{m}'.format(d=days_hours_minutes(train_finish)[0],
                                                 h=days_hours_minutes(train_finish)[1],
                                                 m=days_hours_minutes(train_finish)[2]))
-
+Tlog.info('\nTotal Training Time {d}:{h}:{m}'.format(d=days_hours_minutes(train_finish)[0],
+                                                      h=days_hours_minutes(train_finish)[1],
+                                                      m=days_hours_minutes(train_finish)[2]))
 multi_val_performance['LSTM'] = multi_lstm_model.evaluate(wg.val)
 multi_performance['LSTM'] = multi_lstm_model.evaluate(wg.test, verbose=0)
 multi_lstm_model.save(os.getcwd() + '/Bmore_Crime_Predict_Model.keras')
@@ -253,10 +279,10 @@ train_error = multi_val_performance['LSTM'][1]
 test_error = multi_performance['LSTM'][1]
 geo_uncertainty = math.sqrt((lat_error**2)+(lon_error**2))
 model_error = math.sqrt((train_error**2)+(test_error**2))
-combined_uncertainty = math.sqrt((lat_error**2)+(lon_error**2)+(train_error**2)+(test_error**2))
-print('Geo Uncertainty:',geo_uncertainty)
-print('Model Error:',model_error)
-print('Combined Uncertainty:',combined_uncertainty)
+print('Geo Uncertainty = ',geo_uncertainty)
+print('Model Error = ',model_error)
+Tlog.info('Geo Uncertainty = '+str(geo_uncertainty))
+Tlog.info('Model Error = '+str(model_error))
 
 ##########################################
 # Getting the latest crime data, 

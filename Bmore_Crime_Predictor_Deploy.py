@@ -10,6 +10,9 @@ import pandas as pd
 import keras
 import json
 import joblib
+import logging
+
+Dlog = logging.getLogger(__name__)
 
 model_file_name = 'Bmore_Crime_Predict_Model.keras'
 deploy_filename = 'deploy.csv'
@@ -33,6 +36,8 @@ oe = joblib.load(encoder_filename) # loading for possible change of features
 print('Input Shape:',multi_lstm_model.input_shape)
 print('Output Shape:',multi_lstm_model.output_shape)
 print(multi_lstm_model.summary())
+Dlog.info('Model Input Shape = '+str(multi_lstm_model.input_shape))
+Dlog.info('Model Output Shape = '+str(multi_lstm_model.output_shape))
 
 ## Preparing deployment data for inference
 deploy_shape_tu = deploy_df.shape
@@ -46,6 +51,7 @@ LATEST_DATETIME = deploy_df.tail(1).index[0]
 FORECAST_DATE_RANGE = pd.date_range(start=LATEST_DATETIME,
                                     freq='1H',
                                     periods=metadata_dict['OUT_STEPS']+1)[1:]
+Dlog.info('Date Range of Prediction From '+str(LATEST_DATETIME)+' To '+str(FORECAST_DATE_RANGE[-1]))
 
 ## Generating inference and scaling back to original data
 pred_ar = multi_lstm_model.predict(deploy_ar)
@@ -57,8 +63,8 @@ forecast_df = pd.DataFrame(norm.inverse_transform(pred_df),
                             columns=pred_df.columns,
                             index=pred_df.index)
 forecast_df.to_csv('Bmore_Crime_Forecast.csv',
-                   index=True,
-                   columns = forecast_df.columns)
+                    index=True,
+                    columns = forecast_df.columns)
 
 
 
