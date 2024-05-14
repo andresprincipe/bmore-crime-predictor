@@ -14,8 +14,7 @@ ipydeps.pip(['IPython',
              'tqdm',
              'pandas',
              'joblib',
-             'scikit-learn',
-             'IPython'],verbose=False)
+             'scikit-learn'],verbose=False)
 import logging
 import IPython
 import tensorflow as tf
