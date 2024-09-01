@@ -9,6 +9,9 @@ import json
 import os
 from datetime import date
 from urllib.parse import urlparse, urlunparse
+from datetime import datetime
+import time
+from dateutil.relativedelta import relativedelta
 
 class APIOffset_UrlGather:
     """
@@ -62,7 +65,6 @@ class APIOffset_UrlGather:
             feature_num = self.CheckFeatures(url)
             AllDataURLs_li.append(url)
         return AllDataURLs_li[:-1]
-
 
 class BmoreDataExtraction:
     """
@@ -220,3 +222,30 @@ class BmoreDataExtraction:
             GEO_DATA_df = properties_df.merge(meanGeos_df,left_index=True,right_index=True)
             GEO_DATA_DF_dict[key] = GEO_DATA_df
         return GEO_DATA_DF_dict
+
+class TimeRangeBuild:
+    """
+    This class is meant to take today's datetime convert it into milliseconds.
+    Then based on inputs into the class it determines the millisecond time 
+    stamp for a date in the past. Ultimately it gives you a datetime range that 
+    you can use as bounds for a query where the field is in milliseconds.
+    """
+    def __init__(self,yearsBack=0,monthsBack=0,daysBack=0):
+        self.now_milli_ = int(time.time() * 1000)
+        self.now_dt_ = datetime.fromtimestamp(self.now_milli_/1000.0)
+        self.years_ = yearsBack
+        self.months_ = monthsBack
+        self.days_ = daysBack
+    
+    def nTimeRangeBack(self):
+        nBack_dt = self.now_dt_ - relativedelta(years=self.years_,
+                                                months=self.months_,
+                                                days=self.days_)
+        nBack_milli = int(nBack_dt.timestamp() * 1000)
+        return nBack_milli, nBack_dt
+                
+    def CreateMinMaxDict(self):
+        MinMax_dict = {}
+        MinMax_dict['MAX'] = (self.now_milli_,self.now_dt_)
+        MinMax_dict['MIN'] = self.nTimeRangeBack()
+        return MinMax_dict

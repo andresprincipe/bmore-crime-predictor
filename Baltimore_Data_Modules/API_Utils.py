@@ -39,7 +39,7 @@ class TimeRangeBuild:
         MinMax_dict['MIN'] = self.nTimeRangeBack()
         return MinMax_dict
      
-# trb = TimeRangeBuild(daysBack=7)
+# trb = TimeRangeBuild(yearsBack=20)
 # print(trb.CreateMinMaxDict())
 
 class APIOffset_UrlGather:
