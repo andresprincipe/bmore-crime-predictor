@@ -8,3 +8,6 @@ BmoreCrimeForecast.log
 categorical_encoder.save
 # Generated numerical normalizer
 normalizer.save
+# generated deployment data
+deploy.csv
+deploy_metadata.json
