@@ -7,4 +7,3 @@
 - Bmore_Crime_Predictor_Deploy.py is a python script that generates future geolocations of crime based off the most recent crimes in Baltimore city
 - Forecast_Map_Generator.py is a python script that visualizes the predicted geolocation forcast of potential future crimes in Baltimore city
 - ForecastMap.html is an html file that can be opened in a browser to visualize the most recent crime location predictions.
-- Bmore_Crime_Predictor.ipynb is a notebook that visualizes the functionality of the machine learning model
