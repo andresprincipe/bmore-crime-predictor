@@ -1,5 +1,5 @@
 # generated JSON of Part 1 Crime Data
-.Baltimore_Data/
+Baltimore_Data/*
 # Testing/Development Notebook
 Baltimore_Crime_Predictor.ipynb
 # Generated log from data pull
@@ -11,3 +11,5 @@ normalizer.save
 # generated deployment data
 deploy.csv
 deploy_metadata.json
+.ipynb_checkpoints/*
+.DS_Store
