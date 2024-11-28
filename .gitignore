@@ -12,4 +12,6 @@ normalizer.save
 deploy.csv
 deploy_metadata.json
 .ipynb_checkpoints/*
+__pycache__/*
 .DS_Store
+
